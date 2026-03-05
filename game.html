@@ -52,7 +52,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 320px;
-    height: 280px;
+    height: auto;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
@@ -290,7 +290,14 @@ input:checked + .slider:before { transform: translateX(26px); }
         <span>visit profile</span>
         <span style="font-size:24px;">👤</span>
     </div>
-
+    <div class="menu-item" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+        <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+            <span>set target</span>
+            <input type="number" id="customTargetInput" value="50" style="width: 60px; padding: 5px; border-radius: 5px; border: none; text-align: center; font-weight: bold; background: rgba(255,255,255,0.8); color: #333; outline: none;">
+        </div>
+        <button onclick="updateTarget()" style="width: 100%; padding: 8px; background: #ffcc00; color: #333; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Save Target</button>
+    </div>
+    
     <div class="back-btn" onclick="toggleMenu()">
         <div style="font-size:20px;">🔙</div>
         <span>back to game</span>
@@ -385,7 +392,7 @@ bgMusic.volume = 0.5; // Thoda kam volume taki baki sound saaf sunai dein
     // --- Game Variables ---
     let frames = 0;
     let score = 0; 
-    const targetScore = 30; 
+    let targetScore = 30; 
     const pipes = [];
     const pipeWidth = 50;
     const gap = 150; 
@@ -627,6 +634,30 @@ if (!isMuted) winSound.play(); // Victory sound
         isGamePaused = false;
         loop();
     }
+        // --- NAYA: Target Update Function ---
+    function updateTarget() {
+        let newTarget = parseInt(document.getElementById('customTargetInput').value);
+        
+        if (newTarget > 0) {
+            targetScore = newTarget; // Target update kar diya
+            // Bottom UI card mein target dikhana update karo
+            document.querySelector('.card-bottom div:nth-child(2)').innerText = `Target : ${targetScore}`;
+            
+            // Custom alert dikhao aur button click sound bajao (agar function hain)
+            if (typeof playClick === "function") playClick();
+            if (typeof showCustomAlert === "function") {
+                showCustomAlert(`Mitron! Naya target ${targetScore} set ho gaya hai.`);
+            }
+            
+            // Menu automatically band kar do
+            toggleMenu(); 
+        } else {
+            if (typeof showCustomAlert === "function") {
+                showCustomAlert("Arre bhai, target 0 se bada hona chahiye!");
+            }
+        }
+    }
+    
         // --- NAYA: Menu aur Audio Logic ---
     let isMuted = false;
     const menuOverlay = document.getElementById('menuOverlay');
